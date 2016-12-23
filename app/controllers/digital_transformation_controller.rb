@@ -398,16 +398,28 @@ class DigitalTransformationController < ApplicationController
     #como conheceu a AIESEC
     person.how_got_to_know_aiesec = how_got_to_know_aiesec.to_i
     person.travel_interest = travel_interest.to_i
-    person.want_contact_by_email = (want_contact_by_email == 'on') ? true : false
-    person.want_contact_by_phone = (want_contact_by_phone == 'on') ? true : false
-    person.want_contact_by_whatsapp = (want_contact_by_whatsapp == 'on') ? true : false
+    how_to_contact(person, want_contact_by_email, want_contact_by_phone, want_contact_by_whatsapp)
 
     tags = interested_program
     tags = "'"+campagin.to_s+"','"+interested_program+"'" unless campagin.nil? || campagin.empty?
     person.save(validate: false)
     xp_sync = Sync.new
     xp_sync.send_to_rd(person, nil, xp_sync.rd_identifiers[:open], tags)
-    
+  
+    redirect_after_sign_up(interested_program)
+  end
+
+  private
+
+  def how_to_contact(person, want_contact_by_email, want_contact_by_phone, want_contact_by_whatsapp)
+    person.want_contact_by_email = (want_contact_by_email == 'on') ? true : false
+    person.want_contact_by_phone = (want_contact_by_phone == 'on') ? true : false
+    person.want_contact_by_whatsapp = (want_contact_by_whatsapp == 'on') ? true : false
+
+    return person
+  end
+
+  def redirect_after_sign_up(interested_program)
     case interested_program
       when 'GCDP', 'GV'
         redirect_to 'http://brasil.aiesec.org.br/obrigado-por-se-inscrever-ogcdp'
@@ -419,7 +431,6 @@ class DigitalTransformationController < ApplicationController
         redirect_to 'http://brasil.aiesec.org.br/obrigado-por-se-inscrever-ogcdp'
     end
   end
-  private
 
   def prevents_options
     @options = {}
