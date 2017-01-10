@@ -32,17 +32,11 @@ module ExpaRdSync
     end
 
     def call
-      puts "Initialized"
-
       setup_expa_api
 
       time = ExpaPerson.get_last_xp_created_at - 60 || Time.now - 10*60
 
-      puts "Querying people"
-
       people = EXPA::People.list_everyone_created_after(time)
-
-      puts "People Queryed"
 
       @status = false unless act_on_people(people)
 
@@ -62,7 +56,6 @@ module ExpaRdSync
 
     def act_on_people(people)
       people.each do |xp_person|
-        puts "Person: #{xp_person}"
         if ExpaPerson.find_by(xp_id: xp_person.id) || ExpaPerson.find_by(xp_email: xp_person.email.downcase)
           update_db_peoples(xp_person)
         else
@@ -95,14 +88,14 @@ module ExpaRdSync
       end
 
       setup_expa_api
-      applications = EXPA::People.get_applications(person.xp_id) unless xp_person.home_mc.id == 1606
+      applications = EXPA::People.get_applications(person.xp_id) # unless xp_person.xp_home_mc_id == 1606
       if applications.any?
         applications.each do |xp_application|
           update_db_applications(xp_application)
         end
       end
       send_to_rd(person, nil, self.rd_identifiers[:expa], nil) #TODO enviar tambem applications (somente quanto ta accepted, match, relized, complted)
-      puts "Update DB Peoples: #{person}"
+
       person
     end
 
@@ -115,8 +108,6 @@ module ExpaRdSync
 
       application.update_from_expa(EXPA::Applications.get_attributes(xp_application.id))
       application.save
-
-      puts "Update DB Applications Application: #{application}"
     end
 
     def send_to_rd(person, application, identifier, tag)
@@ -155,8 +146,6 @@ module ExpaRdSync
       rescue => exception
         puts exception.to_s
       end
-
-      puts "SendToRd"
     end
   end
 end
