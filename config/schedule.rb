@@ -25,23 +25,23 @@ every 10.minutes do
   runner "SendJobDataToSqs.call('ExpaRdSync::ListOpen')"
 end
 
-every 10.minutes do
-  runner 'ExpaRdSync.new.list_open'
-end
+# every 10.minutes do
+#   runner 'ExpaRdSync.new.list_open'
+# end
 
-every 30.minutes do
-  runner 'ExpaRdSync.new.update_podio'
-end
+# every 30.minutes do
+#   runner 'ExpaRdSync.new.update_podio'
+# end
 
-every :day, at: '1am' do
-  runner 'ExpaRdSync.new.list_people'
-end
+# every :day, at: '1am' do
+#   runner 'ExpaRdSync.new.list_people'
+# end
 
-every :saturday, at: '1pm' do
-  runner 'ExpaRdSync.new.list_applications'
-end
+# every :saturday, at: '1pm' do
+#   runner 'ExpaRdSync.new.list_applications'
+# end
 
-every 10.minutes do
-  runner 'ExpaRdSync.new.rd_from_podio_offline_lead'
-end
+# every 10.minutes do
+#   runner 'ExpaRdSync.new.rd_from_podio_offline_lead'
+# end
 
