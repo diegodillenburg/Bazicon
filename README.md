@@ -6,7 +6,7 @@
 
 > Copy the file `local_env.yml` to the `config` directory within app
 
-#### Copiar o arquivo de configuração dos bancos de dados
+#### Copy the database configuration file
 
 `$ cp config/database.example.yml config/database.yml`
 
@@ -51,3 +51,7 @@
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY
 - AWS_REGION
+
+### Slack Notifications
+
+- SLACK_WEBHOOK_URL
