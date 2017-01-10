@@ -1,4 +1,4 @@
-class ExpaRdSync
+class ExpaRdSyncOld
   attr_accessor :rd_identifiers
   attr_accessor :rd_tags
 
@@ -180,6 +180,7 @@ class ExpaRdSync
         send_to_rd(person, nil, self.rd_identifiers[:open], nil)
       end
     end
+
     puts "Listed #{people.length} people finishing #{Time.now}"
   end
 
