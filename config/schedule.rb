@@ -22,7 +22,7 @@
 set :output, 'log/cron.log'
 
 every 10.minutes do
-  runner "SendJobDataToSqs.call('ListOpen')"
+  runner "SendJobDataToSqs.call('ExpaRdSync::ListOpen')"
 end
 
 every 10.minutes do

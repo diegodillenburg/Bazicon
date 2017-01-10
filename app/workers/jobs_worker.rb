@@ -9,7 +9,7 @@ class JobsWorker
     Shoryuken.logger.info("Received message: '#{body}'")
 
     begin
-      body["name"].constantize.call
+      sqs_msg.delete if body["name"].constantize.call
     rescue
       raise NameError, "Not a defined job"
     end
