@@ -46,7 +46,7 @@ class PodioSync
   end
 
   #Create a Podio item on Leads OGX with the applications achieved
-  def send_ogx_application(application, podio_id)
+  def send_ogx_application(application, podio_id, status)
     loggin
     fields = {}
     fields['application-created-at'] = {'start' => application.xp_created_at.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_created_at.nil?
@@ -94,33 +94,43 @@ class PodioSync
   def send_icx_application(application,podio_id)
     loggin
     fields = {}
-    fields['titulo'] = application.xp_person.xp_full_name unless application.xp_person.nil?
+
+    delivery = false
+
+    delivery = true if status == 'realized' || status == 'completed'
+
+    if delivery
+      fields['ep-name'] = application.xp_person.xp_full_name unless application.xp_person.nil?
+      fields['application-date-realized'] = {'start' => application.xp_date_realized.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_date_realized.nil?
+      fields['application-date-completed'] = {'start' => application.xp_date_completed.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_date_completed.nil?
+    else
+      fields['titulo'] = application.xp_person.xp_full_name unless application.xp_person.nil?
+      fields['application-created-at'] = {'start' => application.xp_created_at.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_created_at.nil?
+      fields['application-date-accepted'] = {'start' => application.xp_date_matched.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_date_matched.nil?
+      fields['application-date-approved'] = {'start' => application.xp_date_approved.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_date_approved.nil?
+    end
+    
     fields['host-lc'] = DigitalTransformation.hash_expa_podio[application.xp_opportunity.xp_home_lc.xp_id] unless application.xp_opportunity.xp_home_lc.xp_id.nil?
     fields['op-id'] = application.xp_opportunity_id unless application.xp_opportunity_id.nil?
     fields['ep-id'] = application.xp_person_id unless application.xp_person_id.nil?
     fields['ep-email'] = [{'type' => 'home', 'value' => application.xp_person.xp_email}] unless application.xp_person.nil?
     fields['status'] = ExpaApplication.xp_statuses[application.xp_status] + 1 unless application.xp_status.nil? || ExpaApplication.xp_statuses[application.xp_status] > 5
-    fields['application-created-at'] = {'start' => application.xp_created_at.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_created_at.nil?
-    fields['application-date-accepted'] = {'start' => application.xp_date_matched.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_date_matched.nil?
-    fields['application-date-approved'] = {'start' => application.xp_date_approved.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_date_approved.nil?
     fields['ep-mc'] = DigitalTransformation.hash_mcs_podio_expa[application.xp_person.xp_home_lc.xp_parent.xp_id][:podio] unless application.xp_person.xp_home_lc.xp_parent.nil?
     fields['home-lc'] = 1 # application.xp_person.xp_home_lc.xp_full_name unless application.xp_person.xp_home_lc.nil?
     fields['opportunity'] = podio_id unless podio_id.nil?
 
     # Sincronizar com o APP Delivery
-    # fields['application-date-realized'] = {'start' => application.xp_date_realized.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_date_realized.nil?
-    # fields['application-date-completed'] = {'start' => application.xp_date_completed.strftime('%Y-%m-%d %H:%M:%S')} unless application.xp_date_completed.nil?
     podio_app_id = nil
 
     case application.xp_opportunity.xp_programmes["id"]
       when 1
-        podio_app_id = 19352693
+        delivery ? podio_app_id = 19352698 : podio_app_id = 19352693
         # fields['programme'] = 1
       when 2
-        podio_app_id = 20228970
+        delivery ? podio_app_id = 20162765 : podio_app_id = 20228970
         # fields['programme'] = 2
       when 5
-        podio_app_id = 20229037
+        delivery ? podio_app_id = 20227600 : podio_app_id = 20229037
         # fields['programme'] = 3
       # when 3
         # fields['programme'] = 4

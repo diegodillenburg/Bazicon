@@ -37,7 +37,7 @@ class PodioWorker
     elsif for_filter == 'opportunities'
       puts 'send_data_to_podio opportunities'
       opportunity_podio_id = podio_sync.send_icx_opportunity(application.xp_opportunity)
-      podio_sync.send_icx_application(application,opportunity_podio_id)
+      podio_sync.send_icx_application(application,opportunity_podio_id, status)
     end
   end
 end
